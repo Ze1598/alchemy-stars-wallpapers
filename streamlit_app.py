@@ -99,7 +99,8 @@ art_info = {
     "Url": art_url,
     "Colour": chosen_colour,
     "FactionLogo": char_info["FactionLogo"],
-    "RenderFaction": render_faction
+    "RenderFaction": render_faction,
+    "BaseColour": char_info["BaseColour"]
 }
 wallpaper_name = gen_wallpaper.wallpaper_gen(art_info)
 

@@ -133,7 +133,7 @@ def wallpaper_gen(art_info: Dict) -> str:
 
 
     # Generate coloured shadows for a nice effect
-    shadow_colour = increment_colour(art_info["Colour"], 0.6)
+    shadow_colour = increment_colour(art_info["BaseColour"], 0.6)
     shadow = Image.new("RGBA", char_art.size, color=shadow_colour)
     wallpaper.paste(shadow, SHADOW_COORD_2, mask=char_art)
 
