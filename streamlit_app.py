@@ -14,7 +14,7 @@ Create  wallpapers for your favourite Alchemy Stars operators!
 
 Use the download link at the bottom for the best image quality!
 
-You can find the app code on GitHub [here]().
+You can find the app code on GitHub [here](https://github.com/Ze1598/alchemy-stars-wallpapers).
 
 Feel free to reach out to me on Twitter for feedback [@ze1598](https://twitter.com/ze1598).
 """)
