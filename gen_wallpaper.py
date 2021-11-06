@@ -34,7 +34,7 @@ def prepare_faction_art(url: str) -> any:
         .open(BytesIO(res.content), mode="r")\
         .convert("RGBA")
 
-    ratio = 2.5
+    ratio = 1
     size = faction_art.size
     new_size = [int(s * ratio) for s in size]
     faction_art = faction_art.resize(new_size)
@@ -111,6 +111,7 @@ def wallpaper_gen(art_info: Dict) -> str:
     ART_COORD = (500, -100)
     SHADOW_OFFSET = (10, 10)
     FACTION_COORD = (-200, -75)
+    FACTION_COORD = (0, 15)
     SHADOW_COORD = tuple(ART_COORD[i] + SHADOW_OFFSET[i] for i in range(len(ART_COORD)))
     SHADOW_COORD_2 = tuple(SHADOW_COORD[i] + SHADOW_OFFSET[i] for i in range(len(SHADOW_COORD)))
 
@@ -122,7 +123,7 @@ def wallpaper_gen(art_info: Dict) -> str:
 
     # Request the operator art
     char_art = prepare_char_art(art_info["Url"])
-    # faction_art = prepare_faction_art(art_info["FactionLogo"])
+    faction_art = prepare_faction_art(art_info["FactionLogo"])
 
     # Create a new image
     # bg_colour = complement_hex(art_info["Colour"])
@@ -144,7 +145,8 @@ def wallpaper_gen(art_info: Dict) -> str:
     wallpaper = wallpaper.filter(ImageFilter.BoxBlur(10))
 
     # Paste in the faction logo
-    # wallpaper.paste(faction_art, FACTION_COORD, mask=faction_art)
+    if art_info["RenderFaction"]:
+        wallpaper.paste(faction_art, FACTION_COORD, mask=faction_art)
     
     # Now paste the actual operator art
     wallpaper.paste(char_art, ART_COORD, mask=char_art)

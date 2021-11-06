@@ -88,6 +88,8 @@ else:
 
 chosen_colour = st.color_picker("Optionally change the background colour", char_info["BaseColour"])
 
+render_faction = st.checkbox("Include character's faction logo?")
+
 # Build a new dictionary with the specific info to generate the wallpaper
 art_url = char_info["SkinUrl"] if art_chosen.startswith("Skin") \
     else char_info["Ascension0"] if art_chosen == "Ascension 0" \
@@ -96,7 +98,8 @@ art_info = {
     "Name": char_info["Name"],
     "Url": art_url,
     "Colour": chosen_colour,
-    "FactionLogo": char_info["FactionLogo"]
+    "FactionLogo": char_info["FactionLogo"],
+    "RenderFaction": render_faction
 }
 wallpaper_name = gen_wallpaper.wallpaper_gen(art_info)
 
