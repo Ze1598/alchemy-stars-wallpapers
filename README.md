@@ -1,4 +1,4 @@
-# arknights-desktop-wallpapers
+# alchemy-stars-wallpapers
 [live app](https://alchemy-stars-wallpapers.herokuapp.com/)
 
 A web app built with [Streamlit](https://www.streamlit.io/) in Python to create Alchemy Stars desktop wallpapers on the fly.
