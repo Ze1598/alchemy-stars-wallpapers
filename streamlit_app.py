@@ -16,7 +16,7 @@ Use the download link at the bottom for the best image quality!
 
 You can find the app code on GitHub [here](https://github.com/Ze1598/alchemy-stars-wallpapers).
 
-Feel free to reach out to me on Twitter for feedback [@ze1598](https://twitter.com/ze1598).
+The app was coded by [@Ze1598](https://github.com/Ze1598), and tested and designed by [@MiguelACAlmeida](https://github.com/MiguelACAlmeida).
 """)
 
 
