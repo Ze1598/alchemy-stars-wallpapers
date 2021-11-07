@@ -107,6 +107,50 @@ def complement_hex(hex_colour: str) -> str:
 
     return result
 
+
+def get_adapted_art_coords(alignment: str, art_dim: Tuple, wallpaper_dim: Tuple, og_coord: Tuple) -> Tuple:
+    art_width, art_height = art_dim[0], art_dim[1]
+    if alignment == "Right":
+        # Basically ensure images thinner than half the wallpaper's width are rendered on the right
+        if art_width < 800:
+            art_x = int( (wallpaper_dim[0] // 4) * 2.5 )
+        elif art_width < 1300:
+            art_x = int( (wallpaper_dim[0] // 4) * 2 )
+        elif art_width < (wallpaper_dim[0] // 2):
+            art_x = (wallpaper_dim[0] // 4) * 3
+        else:
+            art_x = og_coord[0]
+
+    if alignment == "Left":
+        # Same as above, but on left side
+        if art_width < 800:
+            art_x = 0
+        elif art_width < 1300:
+            art_x = -150
+        elif art_width > 1700:
+            art_x = -700
+        elif art_width < (wallpaper_dim[0] // 2):
+            art_x = int( (wallpaper_dim[0] // 4) )
+        else:
+            art_x = -og_coord[0]
+
+    if alignment == "Centred":
+        # Center-aligned, that's it
+        art_x = (wallpaper_dim[0] - art_dim[0]) // 2
+
+    # And short images are rendered with a positive coordinate
+    if art_height < wallpaper_dim[1]:
+        art_y = 75
+    elif art_height < 1300:
+        art_y = 0
+    elif art_height > 1500:
+        art_y = -200
+    else:
+        art_y = og_coord[1]
+
+    return (art_x, art_y)
+
+
 def wallpaper_gen(art_info: Dict) -> str:
     WALLPAPER_DIM = (1920, 1080)
     ART_COORD = (500, -100)
@@ -122,26 +166,7 @@ def wallpaper_gen(art_info: Dict) -> str:
     faction_art = prepare_faction_art(art_info["FactionLogo"])
 
     # Update left coordinate to draw character art based on the art dimensions
-    art_width, art_height = char_art.size[0], char_art.size[1]
-    # Basically ensure images thinner than half the wallpaper's width are rendered on the right
-    if art_width < 800:
-        art_x = int( (WALLPAPER_DIM[0] // 4) * 2.5 )
-    elif art_width < 1300:
-        art_x = int( (WALLPAPER_DIM[0] // 4) * 2 )
-    elif art_width < (WALLPAPER_DIM[0] // 2):
-        art_x = (WALLPAPER_DIM[0] // 4) * 3
-    else:
-        art_x = ART_COORD[0]
-    # And short images are rendered with a positive coordinate
-    if art_height < WALLPAPER_DIM[1]:
-        art_y = 75
-    elif art_height < 1300:
-        art_y = 0
-    elif art_height > 1500:
-        art_y = -200
-    else:
-        art_y = ART_COORD[1]
-    ART_COORD = (art_x, art_y)
+    ART_COORD = get_adapted_art_coords(art_info["CharAlign"], char_art.size, WALLPAPER_DIM, ART_COORD)
 
     # Create a new image
     # bg_colour = complement_hex(art_info["Colour"])

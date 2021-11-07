@@ -88,6 +88,11 @@ else:
 
 chosen_colour = st.color_picker("Optionally change the background colour", char_info["BaseColour"])
 
+char_align = st.selectbox(
+    "How do you want to align the character?",
+    ["Right", "Left", "Centred"]
+)
+
 render_faction = st.checkbox("Include character's faction logo?")
 
 # Build a new dictionary with the specific info to generate the wallpaper
@@ -100,7 +105,8 @@ art_info = {
     "Colour": chosen_colour,
     "FactionLogo": char_info["FactionLogo"],
     "RenderFaction": render_faction,
-    "BaseColour": char_info["BaseColour"]
+    "BaseColour": char_info["BaseColour"],
+    "CharAlign": char_align
 }
 wallpaper_name = gen_wallpaper.wallpaper_gen(art_info)
 
