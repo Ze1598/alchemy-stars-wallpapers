@@ -126,6 +126,8 @@ def wallpaper_gen(art_info: Dict) -> str:
     # Basically ensure images thinner than half the wallpaper's width are rendered on the right
     if art_width < 800:
         art_x = int( (WALLPAPER_DIM[0] // 4) * 2.5 )
+    elif art_width < 1300:
+        art_x = int( (WALLPAPER_DIM[0] // 4) * 2 )
     elif art_width < (WALLPAPER_DIM[0] // 2):
         art_x = (WALLPAPER_DIM[0] // 4) * 3
     else:
@@ -133,6 +135,8 @@ def wallpaper_gen(art_info: Dict) -> str:
     # And short images are rendered with a positive coordinate
     if art_height < WALLPAPER_DIM[1]:
         art_y = 75
+    elif art_height < 1300:
+        art_y = 0
     elif art_height > 1500:
         art_y = -200
     else:
