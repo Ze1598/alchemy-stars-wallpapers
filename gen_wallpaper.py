@@ -108,31 +108,48 @@ def complement_hex(hex_colour: str) -> str:
     return result
 
 def wallpaper_gen(art_info: Dict) -> str:
+    WALLPAPER_DIM = (1920, 1080)
     ART_COORD = (500, -100)
-    SHADOW_OFFSET = (10, 10)
     FACTION_COORD = (-200, -75)
     FACTION_COORD = (0, 15)
-    SHADOW_COORD = tuple(ART_COORD[i] + SHADOW_OFFSET[i] for i in range(len(ART_COORD)))
-    SHADOW_COORD_2 = tuple(SHADOW_COORD[i] + SHADOW_OFFSET[i] for i in range(len(SHADOW_COORD)))
 
     # Set up the file name and save path
     wallpaper_name = f"{art_info['Name']}.png"
     wallpaper_path = os.path.join(os.getcwd(), wallpaper_name)
 
-    print("Creating", wallpaper_name)
-
     # Request the operator art
     char_art = prepare_char_art(art_info["Url"])
     faction_art = prepare_faction_art(art_info["FactionLogo"])
 
+    # Update left coordinate to draw character art based on the art dimensions
+    art_width, art_height = char_art.size[0], char_art.size[1]
+    # Basically ensure images thinner than half the wallpaper's width are rendered on the right
+    if art_width < 800:
+        art_x = int( (WALLPAPER_DIM[0] // 4) * 2.5 )
+    elif art_width < (WALLPAPER_DIM[0] // 2):
+        art_x = (WALLPAPER_DIM[0] // 4) * 3
+    else:
+        art_x = ART_COORD[0]
+    # And short images are rendered with a positive coordinate
+    if art_height < WALLPAPER_DIM[1]:
+        art_y = 75
+    elif art_height > 1500:
+        art_y = -200
+    else:
+        art_y = ART_COORD[1]
+    ART_COORD = (art_x, art_y)
+
     # Create a new image
     # bg_colour = complement_hex(art_info["Colour"])
     # bg_colour = increment_colour(bg_colour, 0.25)
-    wallpaper = Image.new("RGBA", (1920, 1080), color=art_info["Colour"])
+    wallpaper = Image.new("RGBA", WALLPAPER_DIM, color=art_info["Colour"])
     # wallpaper = Image.new("RGBA", (1920, 1080), color = bg_colour)
 
-
     # Generate coloured shadows for a nice effect
+    SHADOW_OFFSET = (10, 10)
+    SHADOW_COORD = tuple(ART_COORD[i] + SHADOW_OFFSET[i] for i in range(len(ART_COORD)))
+    SHADOW_COORD_2 = tuple(SHADOW_COORD[i] + SHADOW_OFFSET[i] for i in range(len(SHADOW_COORD)))
+
     shadow_colour = increment_colour(art_info["BaseColour"], 0.6)
     shadow = Image.new("RGBA", char_art.size, color=shadow_colour)
     wallpaper.paste(shadow, SHADOW_COORD_2, mask=char_art)
