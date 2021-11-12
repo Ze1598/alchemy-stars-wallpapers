@@ -25,6 +25,8 @@ def get_characters() -> Dict:
 
     # GET the HTML from the page of characters
     chars_url = "https://alchemystars.fandom.com/wiki/Category:Characters"
+    # Alternate source (at least gets updated quicker)
+    chars_url = "https://alchemystars.fandom.com/wiki/Category:Characters?from=%C2%A1"
     req = requests.get(chars_url)
     soup = BeautifulSoup(req.content, "lxml")
     
