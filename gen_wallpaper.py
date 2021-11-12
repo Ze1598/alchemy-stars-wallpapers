@@ -151,10 +151,21 @@ def get_adapted_art_coords(alignment: str, art_dim: Tuple, wallpaper_dim: Tuple,
     return (art_x, art_y)
 
 
+def get_adapted_logo_coords(alignment: str, art_dim: Tuple, wallpaper_dim: Tuple, og_coord: Tuple) -> Tuple:
+    if alignment == "Left":
+        art_x = wallpaper_dim[0] - art_dim[0]
+        art_y = og_coord[1]
+    else:
+        art_x = og_coord[0]
+        art_y = og_coord[1]
+    
+    return (art_x, art_y)
+
+
 def wallpaper_gen(art_info: Dict) -> str:
     WALLPAPER_DIM = (1920, 1080)
     ART_COORD = (500, -100)
-    FACTION_COORD = (-200, -75)
+    # FACTION_COORD = (-200, -75)
     FACTION_COORD = (0, 15)
 
     # Set up the file name and save path
@@ -167,6 +178,7 @@ def wallpaper_gen(art_info: Dict) -> str:
 
     # Update left coordinate to draw character art based on the art dimensions
     ART_COORD = get_adapted_art_coords(art_info["CharAlign"], char_art.size, WALLPAPER_DIM, ART_COORD)
+    FACTION_COORD = get_adapted_logo_coords(art_info["CharAlign"], faction_art.size, WALLPAPER_DIM, FACTION_COORD)
 
     # Create a new image
     # bg_colour = complement_hex(art_info["Colour"])
