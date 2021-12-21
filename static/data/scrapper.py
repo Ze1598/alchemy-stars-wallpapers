@@ -50,7 +50,7 @@ def get_characters() -> Dict:
 
     return char_dict
 
-
+    
 def get_single_char_info(page_url: str) -> Dict:
     """Get all the information for a single character: URL to images (ascension and skins), rarity, and elements.
 
@@ -63,45 +63,51 @@ def get_single_char_info(page_url: str) -> Dict:
     # GET the HTML for the character page
     req = requests.get(page_url)
     soup = BeautifulSoup(req.content, "lxml")
-
-    stages = ["Base", "Ascension 3"]
-    # Images to filter to keep only skin images
-    skin_filter = stages + ["Equpipment", "Logo", ""]
+    
     stage_names = ["Ascension0", "Ascension3"]
-    thumbnail_elems = soup.find_all("img", class_="pi-image-thumbnail")
-    # Just the relevant ones
-    ascension_images = [img["src"] for img in thumbnail_elems if img["alt"] in stages]
-    skin_images = [img["src"] for img in thumbnail_elems if img["alt"] not in skin_filter]
-    faction_image = [img["src"] for img in thumbnail_elems if img["alt"] == "Logo"]
-
-    img_dict = {
-        name: img.split("/revision")[0] for name, img in zip(stage_names, ascension_images)
-    }
-    img_dict["Ascension3"] = img_dict.get("Ascension3", None)
-    skin_dict = {
-        f"Skin{skin_num}": img.split("/revision")[0] for skin_num, img in zip( range(1, len(skin_images)), skin_images )
-    }
-
-    info_table = soup.find("table", class_="pi-horizontal-group")
+    ascension_tabs = ['Initial', 'Ascended']
+    char_tabs_div = soup.find('div', class_='tabber wds-tabber')
     # Mechanism to filter out non-playable characters...
-    try:
-        # Relevant info is in the <td>s of the nested <tbody>
-        table_cells = info_table.tbody.find_all("td", class_="pi-horizontal-group-item")
-    except:
+    if char_tabs_div == None:
         return dict()
-    # Read the character elements from the icons' alt attribute    
-    char_element = [i.img["alt"] for i in table_cells[2].find_all("span")]
-    # Count the number of rarity stars
-    char_rarity = len(table_cells[0].text)
+    # The first one is the row with buttons to swap tabs
+    num_tabs = len(char_tabs_div) - 1
+    char_tabs = char_tabs_div.find_all('div', class_='wds-tab__content')
+    # List with URL of character arts
+    char_images = [tab.find('a', class_='image')['href'] for tab in char_tabs_div.find_all('div', class_='aurorian_img')]
+    # Keep only base and ascended arts
+    _images_temp = list(filter(lambda url: 'Skin' not in url, char_images))
+    img_dict = {
+        name: img for name, img in zip(stage_names, _images_temp)
+    }
+    # Keep only skins
+    _images_temp = list(filter(lambda url: 'Skin' in url, char_images))
+    skin_dict = {
+        f"Skin{skin_num}": img for skin_num, img in zip( range(1, len(_images_temp)), _images_temp )
+    }
+    # Enough to get the first instance because it's always the same for the character
+    faction_image = char_tabs_div.find('div', class_='aurorian_logo').find('img')['src']
 
+    # Main and Sub elements can be derived from the element images' alt attributes    
+    main_element = char_tabs_div.find('div', class_='aurorian_element1').find('img')['alt'].split(' ')[1].split('.')[0]
+    sub_element = char_tabs_div.find('div', class_='aurorian_element2')
+    # Subelement might not exist so only finish scraping if it does exist
+    if sub_element != None:
+        sub_element = sub_element.find('img')['alt'].split(' ')[1].split('.')[0]
+
+    # Rarity is derived from the class of an element
+    # It is the second class ([1]), and the number is the last character of the name ([-1])
+    char_rarity = char_tabs_div.find('div', class_='aurorian_rarity').find('div')['class'][1][-1]
+    
     return {
-        **img_dict,
+        'Ascension0': img_dict['Ascension0'],
+        'Ascension3': img_dict.get('Ascension3', None),
         # Bring the skins as individual keys
         **skin_dict,
-        "Element": char_element[0],
-        "SubElement": char_element[1] if len(char_element) != 1 else None,
+        "Element": main_element,
+        "SubElement": sub_element,
         "Rarity": char_rarity,
-        "FactionLogo": faction_image[0] if len(faction_image) > 0 else None
+        "FactionLogo": faction_image if faction_image else None
     }    
 
 
@@ -137,9 +143,11 @@ def main():
     data = list()
     # Scrape all information for each character
     for char in char_dict:
-        # if char in ["Nemesis", "Vice", "Paloma"]:
+        # if char in ["Bethel", "Nemesis", "Vice", "Paloma"]:
         logging.info(f"{datetime.datetime.now()}: Scraping {char}")
+
         char_info = get_single_char_info(char_dict[char])
+
         # Mechanism to filter out non-playable characters...
         if char_info == dict(): 
             logging.info(f"{datetime.datetime.now()}: {char} is not a playable character")
