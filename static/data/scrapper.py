@@ -83,7 +83,7 @@ def get_single_char_info(page_url: str) -> Dict:
     # Keep only skins
     _images_temp = list(filter(lambda url: 'Skin' in url, char_images))
     skin_dict = {
-        f"Skin{skin_num}": img for skin_num, img in zip( range(1, len(_images_temp)), _images_temp )
+        f"Skin{skin_num}": img for skin_num, img in zip( range(1, len(_images_temp) + 1), _images_temp )
     }
     # Enough to get the first instance because it's always the same for the character
     faction_image = char_tabs_div.find('div', class_='aurorian_logo').find('img')['src']
@@ -143,7 +143,7 @@ def main():
     data = list()
     # Scrape all information for each character
     for char in char_dict:
-        # if char in ["Bethel", "Nemesis", "Vice", "Paloma"]:
+        # if char in ["Victoria", "Nemesis", "Vice", "Paloma"]:
         logging.info(f"{datetime.datetime.now()}: Scraping {char}")
 
         char_info = get_single_char_info(char_dict[char])
