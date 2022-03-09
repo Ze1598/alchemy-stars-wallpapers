@@ -86,7 +86,7 @@ def get_single_char_info(page_url: str) -> Dict:
         f"Skin{skin_num}": img for skin_num, img in zip( range(1, len(_images_temp) + 1), _images_temp )
     }
     # Enough to get the first instance because it's always the same for the character
-    faction_image = char_tabs_div.find('div', class_='aurorian_logo').find('img')['src']
+    faction_image = char_tabs_div.find('div', class_='aurorian_logo').find('img')['data-src']
 
     # Main and Sub elements can be derived from the element images' alt attributes    
     main_element = char_tabs_div.find('div', class_='aurorian_element1').find('img')['alt'].split(' ')[1].split('.')[0]
