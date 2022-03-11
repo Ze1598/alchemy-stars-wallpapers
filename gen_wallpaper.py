@@ -140,11 +140,13 @@ def get_adapted_art_coords(alignment: str, art_dim: Tuple, wallpaper_dim: Tuple,
 
     # And short images are rendered with a positive coordinate
     if art_height < wallpaper_dim[1]:
-        art_y = 75
+        art_y = 50
+    elif art_height < 1200:
+        art_y = 50
     elif art_height < 1300:
         art_y = 0
     elif art_height > 1500:
-        art_y = -200
+        art_y = -275
     else:
         art_y = og_coord[1]
 
